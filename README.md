@@ -1,2 +1,2 @@
-# machine-learning-yolo
-Materiale til forløb om maskinlæring og objektgenkendelse med yolo
+# Machine Learning og YOLO
+Materiale til forløb om maskinlæring og objektgenkendelse med YOLO.
