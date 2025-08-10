@@ -1,0 +1,9 @@
+# .gitignore
+
+# Virtual environments
+venv/
+
+# YOLO models
+*.pt
+yolov8.pt
+yolov11.pt
