@@ -160,3 +160,7 @@ env/
 # Trash
 .Trashes
 
+# Yolo
+runs
+kaggle
+data

@@ -1,3 +1,0 @@
-pip==25.2
-ultralytics==8.3.176
-python==3.12.5

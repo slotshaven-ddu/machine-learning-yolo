@@ -1,5 +1,6 @@
-# Demo Object Boxing
+# Examples
 
+## Demo Object Boxing
 This project demonstrates real-time object detection and tracking using a webcam and a YOLOv11 model. It is intended as a simple example for object recognition and bounding box visualization.
 
 ## Workspace Structure

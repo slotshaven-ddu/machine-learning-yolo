@@ -7,7 +7,7 @@ from ultralytics import YOLO
 model = YOLO("yolo11n.pt")
 
 # Open the webcam or video 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 # video_path = "path/to/video.mp4"
 # cap = cv2.VideoCapture(video_path)
 
