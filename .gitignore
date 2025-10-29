@@ -163,4 +163,5 @@ env/
 # Yolo
 runs
 kaggle
-data
+datasets
+settings.py
