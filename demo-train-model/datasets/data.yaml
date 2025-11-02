@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['alien', 'lego', 'robot']
+
+roboflow:
+  workspace: machine-learning-with-yolo
+  project: machine-learning-with-yolo-4zdsh
+  version: 1
+  license: Private
+  url: https://app.roboflow.com/machine-learning-with-yolo/machine-learning-with-yolo-4zdsh/1
