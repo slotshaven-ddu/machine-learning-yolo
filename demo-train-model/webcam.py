@@ -11,6 +11,7 @@ def main():
     device = 0 if torch.cuda.is_available() else "cpu"
 
     # Load trained YOLOv11 model
+    # On windows, adjust path (most likely remove "6"
     model_path = "runs/detect/train6/weights/best.pt"
     model = YOLO(model_path).to(device)
 
