@@ -161,7 +161,15 @@ env/
 .Trashes
 
 # Yolo
-runs
+runs/
 kaggle
 datasets
 settings.py
+*.pt
+
+# Virtual environments
+.venv
+
+# UV
+*.lock
+pyproject.toml
