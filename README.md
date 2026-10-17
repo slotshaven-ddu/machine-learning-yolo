@@ -85,6 +85,9 @@ Du kan også downloade filerne enkeltvis fra GitHub. Så skal du selv lave den s
 
 ```
 machine-learning-yolo/
+  pyproject.toml
+  uv.lock
+  .python-version
   examples/
     image.py
     video.py
@@ -93,6 +96,8 @@ machine-learning-yolo/
       test.webp
       aerial-view.mp4
 ```
+
+Husk også filerne `pyproject.toml`, `uv.lock` og `.python-version` i hovedmappen – uden dem ved uv ikke, hvad der skal installeres.
 
 Ulempen ved at hente filerne uden git er, at du ikke kan hente opdateringer med `git pull`.
 </details>
@@ -103,25 +108,27 @@ Ulempen ved at hente filerne uden git er, at du ikke kan hente opdateringer med 
 2. Svar **Yes, I trust the authors**, hvis VS Code spørger.
 3. Åbn en terminal i VS Code: **Terminal → New Terminal**.
 
-Terminalen skal være **PowerShell** (det er standard på Windows). Brug *ikke* WSL/Ubuntu-terminalen.
+Terminalen skal være **PowerShell** (det er standard på Windows).
 Tjek, at terminalen står i projektmappen – der skal stå `C:\DDU\machine-learning-yolo>` før markøren.
 
 ### Trin 6 – Installér Python-biblioteker
 
-Kør disse to kommandoer i VS Code-terminalen:
+Kør denne kommando i VS Code-terminalen:
 
 ```powershell
-uv init --bare
-uv add ultralytics opencv-python lap
+uv sync
 ```
 
-- `uv init --bare` gør mappen til et Python-projekt (laver filen `pyproject.toml`).
-- `uv add ...` henter Python (hvis du ikke har det) og installerer bibliotekerne i mappen `.venv`:
-  - **ultralytics** – selve YOLO
-  - **opencv-python** – billeder, video og webcam
-  - **lap** – bruges, når YOLO skal følge (tracke) objekter i video
+uv læser projektets filer (`pyproject.toml` og `uv.lock`) og installerer præcis de samme versioner som alle andre i klassen – i mappen `.venv`:
+
+- **Python 3.13** (hvis du ikke har det i forvejen)
+- **ultralytics** – selve YOLO
+- **opencv-python** – billeder, video og webcam
+- **lap** – bruges, når YOLO skal følge (tracke) objekter i video
 
 Det tager nogle minutter første gang, fordi der skal hentes ret meget (bl.a. PyTorch). Vent til terminalen er klar igen.
+
+> Glemmer du dette trin, gør `uv run` det automatisk første gang.
 
 ### Trin 7 – Kør eksemplerne
 
@@ -157,6 +164,7 @@ Dit webcam tænder, og YOLO genkender ting live. Prøv at holde en kop, en telef
 
 - [ ] `git --version` og `uv --version` virker
 - [ ] Projektet ligger i en mappe for sig selv, fx `C:\DDU\machine-learning-yolo`
+- [ ] `uv sync` er kørt uden fejl
 - [ ] `uv run examples/image.py` viser et billede med kasser
 - [ ] `uv run examples/video.py` viser video med kasser og ID'er
 - [ ] `uv run examples/webcam.py` genkender ting fra dit webcam
@@ -170,14 +178,17 @@ Så er du klar til at træne din egen model!
 **`uv` eller `git` "is not recognized as the name of a cmdlet …"**
 Programmet er installeret, men terminalen kender det ikke endnu. Luk *alle* VS Code- og PowerShell-vinduer og åbn dem igen. Hjælper det ikke, så genstart computeren.
 
+**Du vil hellere bruge pip end uv**
+Det kan lade sig gøre: lav et virtuelt miljø og kør `pip install -r requirements.txt`. Vi anbefaler dog uv – så får alle de samme versioner.
+
 **Installationen af uv bliver blokeret**
 Prøv i stedet: `winget install --id=astral-sh.uv -e` i PowerShell. Spørg din lærer, hvis det heller ikke virker.
 
 **`ModuleNotFoundError: No module named ...`**
-Bibliotekerne er ikke installeret i projektet. Tjek at terminalen står i projektmappen, og kør `uv add ultralytics opencv-python lap` igen. Husk at starte scripts med `uv run` – ikke `python`.
+Tjek at terminalen står i projektmappen, og kør `uv sync` igen. Husk at starte scripts med `uv run` – ikke `python`.
 
-**`uv init` siger "Project is already initialized"**
-Det er fint – spring `uv init --bare` over og gå videre med `uv add`.
+**Fejl om `pyproject.toml` eller "No project found"**
+Terminalen står ikke i projektmappen. Skriv `cd C:\DDU\machine-learning-yolo` og prøv igen.
 
 **Fejl om at filen ikke findes (`test.webp` eller `aerial-view.mp4`)**
 Mappen `examples/input` mangler eller ligger forkert. Tjek mappestrukturen under [Trin 4](#trin-4--hent-projektet-fra-github).

@@ -84,8 +84,7 @@ target/
 profile_default/
 ipython_config.py
 
-# pyenv
-.python-version
+# pyenv (.python-version er med i repo, så alle bruger samme Python)
 
 # pipenv
 Pipfile.lock
@@ -170,6 +169,5 @@ settings.py
 # Virtual environments
 .venv
 
-# UV
-*.lock
-pyproject.toml
+# Claude
+CLAUDE.md
