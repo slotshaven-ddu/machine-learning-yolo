@@ -1,36 +1,37 @@
-# pip install opencv-python
+from ultralytics import YOLO
 import cv2
 
-from ultralytics import YOLO
+# PRØV AT ÆNDRE: 0 er det indbyggede kamera – prøv 1, hvis du har et eksternt kamera
+CAMERA = 0
 
-# Load the YOLO model
-model = YOLO("yolo26n.pt")
+model = YOLO("yolo26n.pt")    # færdigtrænet model, der kender 80 hverdagsting
+cap = cv2.VideoCapture(CAMERA)
 
-# Open the webcam TODO handle port 0 or 1
-cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print(f"Kunne ikke åbne kamera {CAMERA}. Prøv et andet tal i CAMERA øverst i scriptet,")
+    print("og tjek at andre programmer (Teams, Zoom ...) ikke bruger kameraet.")
+    raise SystemExit
 
-# Loop through the video frames
-while cap.isOpened():
-    # Read a frame from the video
+print("Tryk q i webcam-vinduet for at stoppe.")
+
+# Løkken læser ét billede (frame) ad gangen fra kameraet
+while True:
     success, frame = cap.read()
-
-    if success:
-        # Run tracking on the frame, persisting tracks between frames
-        results = model.track(frame, persist=True)
-
-        # Visualize the results on the frame
-        annotated_frame = results[0].plot()
-
-        # Display the annotated frame
-        cv2.imshow("YOLO Tracking", annotated_frame)
-
-        # Break the loop if 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
-    else:
-        # Break the loop if the end of the video is reached
+    if not success:
+        print("Fik ikke noget billede fra kameraet.")
         break
 
-# Release the video capture object and close the display window
+    # Tracking: persist=True husker objekterne fra forrige billede, så de beholder deres ID
+    results = model.track(frame, persist=True, verbose=False)
+
+    # Tegn kasser, navne og ID'er på billedet og vis det
+    annotated_frame = results[0].plot()
+    cv2.imshow("YOLO webcam", annotated_frame)
+
+    # Stop, når der trykkes på q
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
+
+# Luk kameraet og vinduet igen
 cap.release()
 cv2.destroyAllWindows()

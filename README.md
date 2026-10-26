@@ -143,7 +143,7 @@ Kør eksemplerne ét ad gangen fra VS Code-terminalen. Første gang henter YOLO 
 uv run examples/image.py
 ```
 
-Billedet åbner med kasser omkring de objekter, YOLO har fundet (personer, busser, cykler …). I terminalen kan du se, hvad der er fundet.
+Billedet åbner med kasser omkring de objekter, YOLO har fundet (personer, busser, cykler …). I terminalen kan du se, hvad der er fundet, hvor sikker YOLO er, og hvor objektet er i billedet (kassens hjørner i pixels).
 
 **2. Video**
 
@@ -199,11 +199,11 @@ Mappen `examples/input` mangler eller ligger forkert. Tjek mappestrukturen under
 **Webcam: sort billede, eller vinduet lukker med det samme**
 - Windows: Gå til **Indstillinger → Beskyttelse af personlige oplysninger og sikkerhed → Kamera** og slå adgang til for apps og skrivebordsapps.
 - Luk andre programmer, der bruger kameraet (Teams, Zoom, kamera-appen).
-- Har du flere kameraer (fx et eksternt), så ret tallet i `examples/webcam.py`:
+- Har du flere kameraer (fx et eksternt), så ret tallet øverst i `examples/webcam.py`:
   ```python
-  cap = cv2.VideoCapture(0)   # prøv 1, hvis 0 ikke virker
+  CAMERA = 0   # prøv 1, hvis 0 ikke virker
   ```
-- **Mac:** Giv VS Code/Terminal adgang til kameraet under *Systemindstillinger → Anonymitet og sikkerhed → Kamera*. Er der en iPhone i nærheden, kan Mac'en vælge iPhonens kamera – prøv et andet tal i `VideoCapture`.
+- **Mac:** Giv VS Code/Terminal adgang til kameraet under *Systemindstillinger → Anonymitet og sikkerhed → Kamera*. Er der en iPhone i nærheden, kan Mac'en vælge iPhonens kamera – prøv et andet tal i `CAMERA`.
 
 **Det kører meget langsomt**
 YOLO kører på computerens processor (CPU), så video og webcam kan hakke lidt på ældre computere. Det er helt normalt.
