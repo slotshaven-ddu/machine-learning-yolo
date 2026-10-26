@@ -31,7 +31,7 @@ class_ids = [i for i, name in model.names.items() if name in (PERSON, PHONE)]
 # Åbn webcam
 cap = cv2.VideoCapture(CAMERA)
 if not cap.isOpened():
-    print(f"❌ Kunne ikke åbne kamera {CAMERA}.")
+    print(f"Kunne ikke åbne kamera {CAMERA}.")
     print("   Prøv et andet nummer, fx:  uv run mobile-detect/webcam.py 1")
     print("   Eller find dit kamera med:  uv run mobile-detect/find-camera.py")
     sys.exit(1)
@@ -44,9 +44,9 @@ def send_status(status):
     """Send status til serveren. Kører serveren ikke, fortsætter vi bare."""
     try:
         requests.post(API_URL, json={"status": status}, timeout=1)
-        print("🔴 Mobil fundet" if status else "⚪ Ingen mobil")
+        print("Mobil fundet" if status else "⚪ Ingen mobil")
     except requests.RequestException:
-        print("⚠️  Kunne ikke kontakte serveren – kører server.py?")
+        print("Kunne ikke kontakte serveren – kører server.py?")
 
 
 send_status(phone_status)
@@ -54,7 +54,7 @@ send_status(phone_status)
 while True:
     success, frame = cap.read()
     if not success:
-        print("❌ Kunne ikke læse billede fra kameraet.")
+        print("Kunne ikke læse billede fra kameraet.")
         break
 
     # Lad YOLO kigge efter personer og mobiler i billedet

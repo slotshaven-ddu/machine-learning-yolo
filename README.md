@@ -22,7 +22,8 @@ Du skal bruge tre programmer:
 | **git** | Henter projektet fra GitHub | https://git-scm.com/install/ |
 | **uv** | Installerer Python og de biblioteker, vi skal bruge | https://docs.astral.sh/uv/ |
 
-Du behøver **ikke** installere Python selv – det klarer uv. Har du allerede Python, gør det ikke noget.
+Hvis du allerede har programmerne, behøver du ikke at installere dem igen. Du behøver **ikke** installere Python selv – det klarer uv. 
+Har du allerede Python, gør det ikke noget.
 
 **Installér VS Code og git** fra linkene ovenfor. Brug standardindstillingerne i installationsprogrammet (bare tryk *Next*).
 
@@ -67,6 +68,8 @@ mkdir C:\DDU
 cd C:\DDU
 git clone https://github.com/slotshaven-ddu/machine-learning-yolo
 ```
+
+Du kan også bruge kommandoen i VS Code (CTRL-SHIFT-P, skriv `git clone`).
 
 Nu har du mappen `C:\DDU\machine-learning-yolo` med alle filerne.
 
@@ -209,4 +212,4 @@ YOLO kører på computerens processor (CPU), så video og webcam kan hakke lidt 
 
 ## Del 2. Sådan træner man sin egen model
 
-Følger.
+Følg guiden i [train-demo/README.md](train-demo/README.md). Her træner du YOLO til at genkende brikkerne på vores brætspil – og bagefter kan du gøre det samme med dine egne billeder.

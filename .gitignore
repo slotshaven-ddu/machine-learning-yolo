@@ -171,3 +171,9 @@ settings.py
 
 # Claude
 CLAUDE.md
+
+
+# Demo-datasættet til train-demo skal med i git
+!train-demo/datasets/
+train-demo/datasets/**/labels.cache
+train-demo/annotated.jpg
