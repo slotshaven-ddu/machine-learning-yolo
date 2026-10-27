@@ -28,9 +28,11 @@ Vi starter fra den færdigtrænede model `yolo26n.pt` (trænet på 80 hverdagsti
 
 ```
 train-demo/
-  train.py           ← træner modellen
-  test-model.py      ← tester modellen på test.jpg
-  test.jpg
+  model-train.py         ← træner modellen
+  model-test.py          ← finder brikker i input-test.jpg og skriver koordinater
+  model-test2.py         ← samme, men skriver brættet som et gitter af bogstaver
+  input-test.jpg         ← testbillede
+  output-test-annotated.jpg  ← testbilledet med kasser (laves af model-test.py)
   datasets/
     data.yaml        ← fortæller YOLO, hvor billederne er, og hvad klasserne hedder
     train/           ← 44 billeder, som modellen lærer af
@@ -54,6 +56,7 @@ train: train/images
 val: valid/images
 test: test/images
 
+# Antal klasser og deres navne. Rækkefølgen bestemmer klassenummeret (circle = 0, maltese = 1 ...)
 nc: 6
 names: ['circle', 'maltese', 'nothing', 'square', 'star', 'temple']
 ```
@@ -81,12 +84,12 @@ Tallene er **normaliserede** – dvs. en andel af billedets bredde/højde (0 til
 Kør i VS Code-terminalen fra projektmappen (`C:\DDU\machine-learning-yolo`):
 
 ```powershell
-uv run train-demo/train.py
+uv run train-demo/model-train.py
 ```
 
-(Du kan også åbne `train.py` og trykke ▶.)
+(Du kan også åbne `model-train.py` og trykke ▶.)
 
-Øverst i `train.py` står de værdier, du kan ændre:
+Øverst i `model-train.py` står de værdier, du kan ændre:
 
 ```python
 MODEL = "yolo26n.pt"   # færdigtrænet model vi bygger videre på
@@ -126,12 +129,14 @@ Træner du igen, kommer resultatet i en ny mappe: `train-2`, `train-3` … Den g
 ## 4. Test modellen
 
 ```powershell
-uv run train-demo/test-model.py
+uv run train-demo/model-test.py
 ```
 
-Scriptet indlæser `runs/detect/train/weights/best.pt`, finder brikker i `test.jpg`, viser billedet og gemmer det som `annotated.jpg`.
+Scriptet indlæser `runs/detect/train/weights/best.pt`, finder brikker i `input-test.jpg` og gemmer billedet med kasser som `output-test-annotated.jpg`. Åbn filen for at se resultatet.
 
-> Hedder din træningsmappe `train-2` eller lignende, så ret `MODEL` øverst i `test-model.py`.
+> Vil du have billedet vist med det samme, så fjern `#` foran `# result.show()` i scriptet.
+
+> Hedder din træningsmappe `train-2` eller lignende, så ret `MODEL` øverst i `model-test.py`.
 
 ### Koordinaterne
 
@@ -167,6 +172,33 @@ col = int(x * COLS) + 1   # x = 0.85 → int(4.25) + 1 = kolonne 5
 
 Det virker kun, når kameraet ser brættet lige ovenfra og brættet fylder billedet. Flytter du kameraet, skal du justere beregningen.
 
+### Brættet som tekst – `model-test2.py`
+
+```powershell
+uv run train-demo/model-test2.py
+```
+
+`model-test2.py` bruger samme model og samme billede, men skriver hele brættet ud som et gitter med ét bogstav pr. felt:
+
+```
+T S M - S
+S T T M C
+- - M - -
+```
+
+| Bogstav | C | M | F | S | T | - |
+|---|---|---|---|---|---|---|
+| Klasse | circle | maltese | square (firkant) | star | temple | nothing / tomt felt |
+
+Sådan virker det:
+
+- Brættet gemmes i en **dictionary**: nøglen er `(række, kolonne)` og værdien er `(navn, sikkerhed)`. Felter uden brik kommer ikke med i dictionary'en og bliver skrevet som `-`.
+- Her tæller række og kolonne fra **0** (ikke fra 1 som i `model-test.py`), fordi de bruges direkte i `range(ROWS)` og `range(COLS)`.
+- `min(..., ROWS - 1)` sørger for, at en brik med midten helt ude på kanten (1.0) ikke havner i en række, der ikke findes.
+- Finder modellen **to brikker i samme felt**, bliver den med højest sikkerhed (*confidence*) valgt.
+
+Det er et godt udgangspunkt, hvis dit eget spil skal vide, hvad der ligger på brættet – fx for at afgøre, hvem der har vundet.
+
 ---
 
 ## 5. Videre: træn på dine egne data
@@ -177,7 +209,7 @@ Når du vil træne på dit eget spil, skal du gøre det samme som i demoen:
 2. **Annotér** – tegn kasser og vælg klasse i [MakeSense](https://www.makesense.ai/) (eller Roboflow). Eksportér i **YOLO-format**.
 3. **Fordel** billederne i `train/`, `valid/` og `test/` (fx 70 / 20 / 10 %). Hvert billede skal have sin label-fil med samme navn.
 4. **Ret `data.yaml`**: `nc` og `names` skal passe til dine klasser – i samme rækkefølge som i annoteringsværktøjet.
-5. **Træn** med `train.py` og **test** med `test-model.py` på et billede, modellen ikke har set.
+5. **Træn** med `model-train.py` og **test** med `model-test.py` / `model-test2.py` på et billede, modellen ikke har set. Husk at rette `LETTERS` i `model-test2.py`, så den passer til dine klasser.
 
 ---
 
@@ -185,19 +217,25 @@ Når du vil træne på dit eget spil, skal du gøre det samme som i demoen:
 
 | Hvor | Værdi | Effekt |
 |---|---|---|
-| `train.py` | `EPOCHS` | Færre = hurtigere, men dårligere model |
-| `train.py` | `IMGSZ` | Mindre (fx 320) = hurtigere, men små detaljer forsvinder |
-| `train.py` | `PATIENCE` | Hvor mange epochs uden forbedring, før træningen stopper af sig selv |
-| `train.py` | `MODEL` | `n` = nano (mindst/hurtigst). `yolo26s.pt` er større og mere præcis, men langsommere |
-| `test-model.py` | `MODEL` | Stien til den model, du vil teste (fx `train-2`) |
-| `test-model.py` | `IMAGE` | Prøv med et andet billede, fx fra `datasets/test/images/` |
+| `model-train.py` | `EPOCHS` | Færre = hurtigere, men dårligere model |
+| `model-train.py` | `IMGSZ` | Mindre (fx 320) = hurtigere, men små detaljer forsvinder |
+| `model-train.py` | `PATIENCE` | Hvor mange epochs uden forbedring, før træningen stopper af sig selv |
+| `model-train.py` | `MODEL` | `n` = nano (mindst/hurtigst). `yolo26s.pt` er større og mere præcis, men langsommere |
+| `model-test.py` | `MODEL` | Stien til den model, du vil teste (fx `train-2`) |
+| `model-test.py` | `IMAGE` | Prøv med et andet billede, fx fra `datasets/test/images/` |
+| `model-test2.py` | `MODEL`, `IMAGE` | Som i `model-test.py` |
+| `model-test2.py` | `ROWS, COLS` | Brættets størrelse – ret dem, hvis dit bræt har et andet antal felter |
+| `model-test2.py` | `LETTERS` | Hvilket bogstav hver klasse skrives som |
 
 ---
 
 ## Fejlfinding
 
 **`Fandt ikke modellen: ...best.pt`**
-Du har ikke trænet endnu, eller træningen ligger i `train-2` osv. Se i `train-demo/runs/detect/` og ret `MODEL` i `test-model.py`.
+Du har ikke trænet endnu, eller træningen ligger i `train-2` osv. Se i `train-demo/runs/detect/` og ret `MODEL` i `model-test.py` (og `model-test2.py`). `model-test2.py` giver i stedet en længere fejl med `FileNotFoundError` – årsagen er den samme.
+
+**Der står `?` i gitteret fra `model-test2.py`**
+Modellen har fundet en klasse, som ikke står i `LETTERS`. Tilføj den i `LETTERS`.
 
 **`Dataset ... does not exist` / `images not found`**
 Mappen `train-demo/datasets` mangler eller er flyttet. Kør `git pull`, og tjek at `data.yaml` ligger i `datasets/` sammen med `train/`, `valid/` og `test/`.
@@ -206,7 +244,7 @@ Mappen `train-demo/datasets` mangler eller er flyttet. Kør `git pull`, og tjek 
 Det er normalt uden grafikkort. Sæt `EPOCHS` ned (fx 10) eller `IMGSZ = 320`.
 
 **`RuntimeError: An attempt has been made to start a new process …`** (Windows)
-Linjen `if __name__ == "__main__":` i `train.py` skal stå der – slet den ikke. Hjælper det ikke, så tilføj `workers=0` i `model.train(...)`.
+Linjen `if __name__ == "__main__":` i `model-train.py` skal stå der – slet den ikke. Hjælper det ikke, så tilføj `workers=0` i `model.train(...)`.
 
 **Modellen finder ingenting på mine egne billeder**
 Tjek at label-filerne har samme navn som billederne, og at `nc`/`names` i `data.yaml` passer. Se `runs/detect/train/train_batch0.jpg` – her kan du se, om dine kasser sidder rigtigt.

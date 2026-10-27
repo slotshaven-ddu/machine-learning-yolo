@@ -177,3 +177,4 @@ CLAUDE.md
 !train-demo/datasets/
 train-demo/datasets/**/labels.cache
 train-demo/annotated.jpg
+Konrad/
